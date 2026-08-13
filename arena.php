@@ -26,24 +26,40 @@ $sessionExpiresAt = strtotime($user['expires_at']);
 
 </head>
 <body>
-<div class="app">
+<div class="app-container">
 
-  <div class="canvas" id="canvas">
-    <div class="canvas-topbar">
-      <div class="brand">
-        <span class="brand-eyebrow">Candon Arena · Seat Map</span>
-        <h1 class="brand-title display">Select Your Seats</h1>
-      </div>
-      <div class="legend">
-        <div class="legend-item"><span class="legend-dot avail"></span>Available</div>
-        <div class="legend-item"><span class="legend-dot selected"></span>Selected</div>
-        <div class="legend-item"><span class="legend-dot sold"></span>Sold</div>
-      </div>
+  <!-- Full-Width Topbar across Canvas & Ticket Panel -->
+  <header class="global-topbar">
+    <div class="brand">
+      <span class="brand-eyebrow">Candon Arena · Seat Map</span>
+      <h1 class="brand-title display">Select Your Seats</h1>
     </div>
 
-    <div class="svg-viewport" id="viewport">
-      <div class="svg-stage" id="stage">
-<svg width="4222" height="3263" viewBox="0 0 4222 3263" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="topbar-actions">
+      <div class="session-timer">
+          <h2>Time Left: <strong id="sessionCountdown">05:00</strong></h2>
+      </div>
+
+      <a href="dev_logout.php" class="btn-logout" title="Logout" aria-label="Logout">
+  <!-- SVG Logout Icon -->
+  <svg class="logout-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <polyline points="16 17 21 12 16 7"></polyline>
+    <line x1="21" y1="12" x2="9" y2="12"></line>
+  </svg>
+  <span class="btn-logout-text">Logout</span>
+</a>
+    </div>
+  </header>
+
+  <!-- Main App Workspace -->
+  <div class="app-body">
+
+    <!-- Interactive SVG Canvas (DOM hierarchy untouched for JS compatibility) -->
+    <div class="canvas" id="canvas">
+      <div class="svg-viewport" id="viewport">
+        <div class="svg-stage" id="stage">
+          <svg viewBox="0 0 4222 3263" id="arena-map" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="4222" height="3263" fill="#F5F5F5"/>
 <rect id="Rectangle 32" width="4222" height="3263" fill="white"/>
 <path id="super thin outline" d="M2123.5 99C3199.94 99 4073 785.137 4073 1632C4073 2478.86 3199.94 3165 2123.5 3165C1047.06 3165 174 2478.86 174 1632C174 785.137 1047.06 99 2123.5 99Z" stroke="#BBBBBB" stroke-width="2"/>
@@ -6433,71 +6449,70 @@ $sessionExpiresAt = strtotime($user['expires_at']);
 
     <div class="hint">Scroll to zoom · drag to pan · click a seat to select it. Only Upperbox &amp; Lowerbox sections are bookable.</div>
 
-    <div class="zoom-controls">
-      <button class="zoom-btn" id="zoomIn" title="Zoom in">+</button>
-      <button class="zoom-btn" id="zoomOut" title="Zoom out">−</button>
-      <button class="zoom-btn" id="zoomReset" title="Reset view" style="font-size:13px;">⤾</button>
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomIn" title="Zoom in">+</button>
+        <button class="zoom-btn" id="zoomOut" title="Zoom out">−</button>
+        <button class="zoom-btn" id="zoomReset" title="Reset view" style="font-size:13px;">⤾</button>
+      </div>
+
+      <div class="toast" id="toast"></div>
     </div>
 
-    <div class="toast" id="toast"></div>
-  </div>
+    <!-- Ticket Panel -->
+    <div class="ticket">
+      <div class="ticket-scroll">
 
-  <div class="ticket">
-    <div class="ticket-scroll">
+        <div class="booking-form" id="bookingForm">
+          <h2 class="ticket-event display"></h2>
+          <div class="ticket-meta">
+            <div><b>Venue</b> — Candon Arena, Ilocos Sur</div>
+            <div><b>Sections</b> — Upperbox &amp; Lowerbox only</div>
+          </div>
 
-      <div class="booking-form" id="bookingForm">
-        <div class="session-timer">
-    <h2>Session expires in:
-    <strong id="sessionCountdown">05:00</strong></h2>
-</div>
-        <h2 class="ticket-event display"></h2>
-        <div class="ticket-meta">
-          <div><b>Venue</b> — Candon Arena, Ilocos Sur</div>
-          <div><b>Sections</b> — Upperbox &amp; Lowerbox only</div>
+          <div class="perf"></div>
+
+          <p class="section-label">
+            <span>Your seats</span>
+            <span id="loadingNote" style="text-transform:none;letter-spacing:0;"></span>
+          </p>
+
+          <div class="seat-counter">
+            <div class="counter-dots" id="counterDots"></div>
+            <span class="counter-text" id="counterText">0 / 5 selected</span>
+          </div>
+
+          <div class="seat-list" id="seatList"></div>
+          <div class="empty-state" id="emptyState">No seats selected yet. Tap any open circle on the map to add it here.</div>
         </div>
 
-        <div class="perf"></div>
+        <div class="confirm-view" id="confirmView">
+          <span class="confirm-badge">Booking confirmed</span>
+          <p class="ticket-eyebrow" style="margin-bottom:2px;">Confirmation code</p>
+          <div class="confirm-code mono" id="confirmCode">—</div>
+          <p class="confirm-sub">Show this code at the gate. Seats are now marked as sold on the map.</p>
 
-        <p class="section-label">
-          <span>Your seats</span>
-          <span id="loadingNote" style="text-transform:none;letter-spacing:0;"></span>
-        </p>
+          <div class="perf"></div>
 
-        <div class="seat-counter">
-          <div class="counter-dots" id="counterDots"></div>
-          <span class="counter-text" id="counterText">0 / 5 selected</span>
+          <p class="section-label"><span>Booked seats</span></p>
+          <div class="seat-list" id="confirmedList"></div>
+
+          <div class="barcode" id="barcode"></div>
         </div>
 
-        <div class="seat-list" id="seatList"></div>
-        <div class="empty-state" id="emptyState">No seats selected yet. Tap any open circle on the map to add it here.</div>
       </div>
 
-      <div class="confirm-view" id="confirmView">
-        <span class="confirm-badge">Booking confirmed</span>
-        <p class="ticket-eyebrow" style="margin-bottom:2px;">Confirmation code</p>
-        <div class="confirm-code mono" id="confirmCode">—</div>
-        <p class="confirm-sub">Show this code at the gate. Seats are now marked as sold on the map.</p>
-
-        <div class="perf"></div>
-
-        <p class="section-label"><span>Booked seats</span></p>
-        <div class="seat-list" id="confirmedList"></div>
-
-        <div class="barcode" id="barcode"></div>
+      <div class="ticket-footer">
+        <div id="footerBooking">
+          <button class="confirm-btn" id="confirmBtn" disabled>Confirm booking</button>
+          <button class="clear-link" id="clearBtn" disabled>Clear all selected seats</button>
+        </div>
+        <div id="footerConfirmed" style="display:none;">
+          <button class="new-booking-btn" id="newBookingBtn">Book more seats</button>
+        </div>
+        <button class="reset-demo" id="resetDemoBtn">Reset demo seat data</button>
       </div>
-
     </div>
 
-    <div class="ticket-footer">
-      <div id="footerBooking">
-        <button class="confirm-btn" id="confirmBtn" disabled>Confirm booking</button>
-        <button class="clear-link" id="clearBtn" disabled>Clear all selected seats</button>
-      </div>
-      <div id="footerConfirmed" style="display:none;">
-        <button class="new-booking-btn" id="newBookingBtn">Book more seats</button>
-      </div>
-      <button class="reset-demo" id="resetDemoBtn">Reset demo seat data</button>
-    </div>
   </div>
 
 </div>
