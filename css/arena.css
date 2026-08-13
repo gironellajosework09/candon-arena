@@ -503,6 +503,7 @@
   @media (max-width:820px){
     .app{grid-template-columns:1fr;grid-template-rows:1fr 46vh;}
     .ticket{box-shadow:0 -8px 30px rgba(0,0,0,.45);}
+    
   }
 
 
