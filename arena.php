@@ -43,8 +43,8 @@ $sessionExpiresAt = strtotime($user['expires_at']);
 
     <div class="svg-viewport" id="viewport">
       <div class="svg-stage" id="stage">
-<svg width="4222" height="3263" viewBox="0 0 4222 3263" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="4222" height="3263" fill="#F5F5F5"/>
+<svg viewBox="0 0 4222 3263" id="arena-map" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="4222" height="3263" fill="#F5F5F5"/>
 <rect id="Rectangle 32" width="4222" height="3263" fill="white"/>
 <path id="super thin outline" d="M2123.5 99C3199.94 99 4073 785.137 4073 1632C4073 2478.86 3199.94 3165 2123.5 3165C1047.06 3165 174 2478.86 174 1632C174 785.137 1047.06 99 2123.5 99Z" stroke="#BBBBBB" stroke-width="2"/>
 <path id="thick outline" d="M654.456 2588.94C1005.66 2918.37 1534.25 3128 2125.41 3128C3182.81 3128 4040 2457.32 4040 1630C4040 802.677 3182.81 132 2125.41 132C1532.87 132 1003.19 342.606 652 673.366" stroke="black" stroke-width="63"/>
