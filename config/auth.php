@@ -8,7 +8,7 @@ require_once __DIR__ . '/database.php';
 |--------------------------------------------------------------------------
 */
 
-define('SESSION_DURATION', 5 * 60); // 5 minutes
+define('SESSION_DURATION', 8 * 60 * 60); // 5 minutes
 
 
 /*
